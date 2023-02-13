@@ -3,10 +3,10 @@
 
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 
-
-
 #include "httplib.h"
 #include "Configure.h"
+#include "DatabaseClient.h"
+
 
 class CNotifyHttpServer
 {
@@ -28,6 +28,7 @@ private:
 	HANDLE threadHandle_;
 	unsigned int threadId_;
 	CConfigure* config_;
+	CDatabaseClient databaseClient_;
 };
 
 

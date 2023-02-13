@@ -1,4 +1,6 @@
+#include "Logger.h"
 #include "NotifyHttpServer.h"
+
 
 CNotifyHttpServer::CNotifyHttpServer(CConfigure* config) : config_(config) {
 }
@@ -10,6 +12,7 @@ CNotifyHttpServer::~CNotifyHttpServer() {
 }
 
 bool CNotifyHttpServer::InitTask() {
+	databaseClient_.Open();
 	return true;
 }
 
@@ -34,25 +37,61 @@ bool CNotifyHttpServer::Work() {
 
 	server_.Post(R"(/notify)", [&](const httplib::Request& req, httplib::Response& rsp) {
 		std::string content = req.body;
-		rsp.set_content("success", "text/html; charset=utf-8");
+
 		httplib::Client forward_client(
 			config_->GetValueAsString("forward", "host", "localhost"),
 			config_->GetValueAsUint32("forward", "port", 9527)
 			);
 
-		forward_client.set_connection_timeout(60);
-		forward_client.set_write_timeout(180);
-		forward_client.set_read_timeout(180);
-		std::cout << "转发消息[/notify],到http://" 
-			<< config_->GetValueAsString("forward", "host", "localhost") 
-			<<":" << config_->GetValueAsUint32("forward", "port", 9527)
+		forward_client.set_connection_timeout(15);
+		forward_client.set_write_timeout(30);
+		forward_client.set_read_timeout(15);
+
+		auto result = forward_client.Post(
+			config_->GetValueAsString("forward", "notify_url" ,"/payment/notify"), 
+			content, 
+			req.get_header_value("Content-Type"));
+
+		ForwardRecord record;
+		record.content = content;
+		record.method = "post";
+		record.url = "/notify";
+		record.originHost = req.remote_addr;
+		record.originPort = req.remote_port;
+		record.forwardHost = config_->GetValueAsString("forward", "host", "localhost");
+		record.forwardPort = config_->GetValueAsUint32("forward", "port", 9527);
+		record.forwardUrl = config_->GetValueAsString("forward", "notify_url", "/notify");
+		record.status = httplib::to_string(result.error());
+
+		//response message to origin server
+		if (result != nullptr) {
+			rsp.set_content(result->body, "text/html; charset=utf-8");
+			record.reason = result->reason;
+			record.response = result->body;
+		}
+
+		databaseClient_.InsertForwardRecord(record);
+
+		std::cout << "转发消息[/notify],到http://"
+			<< config_->GetValueAsString("forward", "host", "localhost")
+			<< ":" << config_->GetValueAsUint32("forward", "port", 9527)
 			<< ", 请求类型:"
 			<< req.get_header_value("Content-Type")
 			<< ", 消息内容:"
-			<< content << std::endl;
-		forward_client.Post(config_->GetValueAsString("forward", "notify_url" ,"/payment/notify"), 
-			content, 
-			req.get_header_value("Content-Type"));
+			<< content 
+			<<",转发状态:"
+			<<record.status
+			<<",转发状态描述:"
+			<<record.reason
+			<<",转发响应内容:"
+			<<record.response
+			<< std::endl;
+
+		spdlog::info("转发消息[/notify],到http://{}:{}, 请求类型:{}, 消息内容:{},转发状态:{},转发状态描述:{},转发响应内容:{}",
+			config_->GetValueAsString("forward", "host", "localhost"),
+			config_->GetValueAsUint32("forward", "port", 9527),
+			req.get_header_value("Content-Type"),
+			content, record.status, record.reason, record.response);
 		});
 
 	server_.Get(R"(/shutdown)", [&](const httplib::Request& req, httplib::Response& rsp) {
@@ -70,6 +109,7 @@ bool CNotifyHttpServer::Work() {
 
 	std::cout << "当前注册的转发url规则如下:" << std::endl;
 	server_.Walk([](const std::string method, std::string url) {
+		if (url.compare("/shutdown") == 0) return;
 		std::cout << method << "  " << url << std::endl;
 		});
 

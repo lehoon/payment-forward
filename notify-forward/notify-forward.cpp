@@ -5,6 +5,7 @@
 #include <iostream>
 #include <signal.h>
 
+#include "Logger.h"
 #include "semaphore.h"
 #include "Configure.h"
 #include "NotifyHttpClient.h"
@@ -19,6 +20,7 @@ int main()
             return -1;
         }
 
+        CLogger::Init();
         CNotifyHttpServer notifyHttpServer(&config);
         notifyHttpServer.InitTask();
         if (!notifyHttpServer.StartTask()) {
@@ -32,7 +34,7 @@ int main()
 
         std::string key = config.GetValueAsString("manager", "key", "");
         CNotifyHttpClient::SendShutdownMessage(config.GetValueAsUint32("server", "port", 9527), key);
-
+        CLogger::Close;
     }
 
     std::cout << "程序退出." << std::endl;

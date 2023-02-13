@@ -1,3 +1,8 @@
 /.vs
 /x64
 /notify-forward/x64
+/Debug
+/Release
+/notify-forward/Debug
+/notify-forward/Release
+/notify-forward/logs
