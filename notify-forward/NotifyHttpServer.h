@@ -1,6 +1,9 @@
 #ifndef NOTIFY_FORWARD_NOTIFY_HTTP_SERVER_H_
 #define NOTIFY_FORWARD_NOTIFY_HTTP_SERVER_H_
 
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+
+
 
 #include "httplib.h"
 #include "Configure.h"

@@ -218,6 +218,7 @@ using socket_t = int;
 #include <string>
 #include <sys/stat.h>
 #include <thread>
+#include <unordered_map>
 
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
 #ifdef _WIN32
@@ -612,6 +613,9 @@ namespace httplib {
 	public:
 		using Handler = std::function<void(const Request&, Response&)>;
 
+		//add by lehoon
+		using WalkFunc = std::function<void(const std::string &, std::string&)>;
+
 		using ExceptionHandler =
 			std::function<void(const Request&, Response&, std::exception_ptr ep)>;
 
@@ -695,6 +699,9 @@ namespace httplib {
 		bool is_running() const;
 		void stop();
 
+		//add by lehoon
+		void Walk(WalkFunc walkFunc);
+
 		std::function<TaskQueue* (void)> new_task_queue;
 
 	protected:
@@ -714,6 +721,9 @@ namespace httplib {
 		size_t payload_max_length_ = CPPHTTPLIB_PAYLOAD_MAX_LENGTH;
 
 	private:
+		//add by lehoon 新增路由信息
+		using Routes = std::unordered_map<std::string, std::string>;
+
 		using Handlers = std::vector<std::pair<std::regex, Handler>>;
 		using HandlersForContentReader =
 			std::vector<std::pair<std::regex, HandlerWithContentReader>>;
@@ -768,6 +778,8 @@ namespace httplib {
 
 		std::atomic<bool> is_running_;
 		std::map<std::string, std::string> file_extension_and_mimetype_map_;
+		//add by lehoon 
+		Routes routes_;
 		Handler file_request_handler_;
 		Handlers get_handlers_;
 		Handlers post_handlers_;
@@ -4886,12 +4898,18 @@ namespace httplib {
 	inline Server::~Server() {}
 
 	inline Server& Server::Get(const std::string& pattern, Handler handler) {
+		//add by lehoon 
+		routes_.emplace("GET", pattern);
+
 		get_handlers_.push_back(
 			std::make_pair(std::regex(pattern), std::move(handler)));
 		return *this;
 	}
 
 	inline Server& Server::Post(const std::string& pattern, Handler handler) {
+		//add by lehoon 
+		routes_.emplace("POST", pattern);
+
 		post_handlers_.push_back(
 			std::make_pair(std::regex(pattern), std::move(handler)));
 		return *this;
@@ -4899,12 +4917,18 @@ namespace httplib {
 
 	inline Server& Server::Post(const std::string& pattern,
 		HandlerWithContentReader handler) {
+		//add by lehoon 
+		routes_.emplace("POST", pattern);
+
 		post_handlers_for_content_reader_.push_back(
 			std::make_pair(std::regex(pattern), std::move(handler)));
 		return *this;
 	}
 
 	inline Server& Server::Put(const std::string& pattern, Handler handler) {
+		//add by lehoon 
+		routes_.emplace("PUT", pattern);
+
 		put_handlers_.push_back(
 			std::make_pair(std::regex(pattern), std::move(handler)));
 		return *this;
@@ -4912,12 +4936,18 @@ namespace httplib {
 
 	inline Server& Server::Put(const std::string& pattern,
 		HandlerWithContentReader handler) {
+		//add by lehoon 
+		routes_.emplace("PUT", pattern);
+
 		put_handlers_for_content_reader_.push_back(
 			std::make_pair(std::regex(pattern), std::move(handler)));
 		return *this;
 	}
 
 	inline Server& Server::Patch(const std::string& pattern, Handler handler) {
+		//add by lehoon 
+		routes_.emplace("PATCH", pattern);
+
 		patch_handlers_.push_back(
 			std::make_pair(std::regex(pattern), std::move(handler)));
 		return *this;
@@ -4925,12 +4955,18 @@ namespace httplib {
 
 	inline Server& Server::Patch(const std::string& pattern,
 		HandlerWithContentReader handler) {
+		//add by lehoon 
+		routes_.emplace("PATCH", pattern);
+
 		patch_handlers_for_content_reader_.push_back(
 			std::make_pair(std::regex(pattern), std::move(handler)));
 		return *this;
 	}
 
 	inline Server& Server::Delete(const std::string& pattern, Handler handler) {
+		//add by lehoon 
+		routes_.emplace("DELETE", pattern);
+
 		delete_handlers_.push_back(
 			std::make_pair(std::regex(pattern), std::move(handler)));
 		return *this;
@@ -4938,12 +4974,18 @@ namespace httplib {
 
 	inline Server& Server::Delete(const std::string& pattern,
 		HandlerWithContentReader handler) {
+		//add by lehoon 
+		routes_.emplace("DELETE", pattern);
+
 		delete_handlers_for_content_reader_.push_back(
 			std::make_pair(std::regex(pattern), std::move(handler)));
 		return *this;
 	}
 
 	inline Server& Server::Options(const std::string& pattern, Handler handler) {
+		//add by lehoon 
+		routes_.emplace("OPTIONS", pattern);
+
 		options_handlers_.push_back(
 			std::make_pair(std::regex(pattern), std::move(handler)));
 		return *this;
@@ -5105,6 +5147,14 @@ namespace httplib {
 			std::atomic<socket_t> sock(svr_sock_.exchange(INVALID_SOCKET));
 			detail::shutdown_socket(sock);
 			detail::close_socket(sock);
+		}
+	}
+
+	//add by lehoon
+	//using Handlers = std::vector<std::pair<std::regex, Handler>>;
+	inline void Server::Walk(WalkFunc walkFunc) {
+		for (auto iter = routes_.begin(); iter != routes_.end(); iter++) {
+			walkFunc(iter->first, iter->second);
 		}
 	}
 

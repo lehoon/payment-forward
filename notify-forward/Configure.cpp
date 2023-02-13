@@ -1,5 +1,7 @@
 ﻿#include "Configure.h"
 
+#include "Md5.h"
+
 #include <stdlib.h>
 #include <iostream>
 
@@ -105,7 +107,10 @@ int ConfigFile::ParseFile(std::map<std::string, std::map<std::string, std::strin
 	std::string group;
 	std::string key;
 	std::string value;
+	std::string content;
 	while ((type = GetLine(line)) != kErrorRow) {
+		content.append(line);
+
 		//处理行
 		if (type == kGroupRow) {
 			group = line;
@@ -119,6 +124,8 @@ int ConfigFile::ParseFile(std::map<std::string, std::map<std::string, std::strin
 		}
 	}
 
+	std::string md5 = CMd5::md5(content);
+	group_items["manager"]["key"] = md5;
 	return RESULT_OK;
 }
 

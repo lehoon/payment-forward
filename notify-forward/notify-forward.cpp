@@ -30,7 +30,8 @@ int main()
         signal(SIGINT, [](int) { sem.post(); });
         sem.wait();
 
-        CNotifyHttpClient::SendShutdownMessage(config.GetValueAsUint32("client", "port", 9527));
+        std::string key = config.GetValueAsString("manager", "key", "");
+        CNotifyHttpClient::SendShutdownMessage(config.GetValueAsUint32("server", "port", 9527), key);
 
     }
 
