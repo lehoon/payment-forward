@@ -5,6 +5,8 @@
 #include <iostream>
 #include <signal.h>
 
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+
 #include "Logger.h"
 #include "semaphore.h"
 #include "Configure.h"
@@ -34,7 +36,7 @@ int main()
 
         std::string key = config.GetValueAsString("manager", "key", "");
         CNotifyHttpClient::SendShutdownMessage(config.GetValueAsUint32("server", "port", 9527), key);
-        CLogger::Close;
+        CLogger::Close();
     }
 
     std::cout << "程序退出." << std::endl;

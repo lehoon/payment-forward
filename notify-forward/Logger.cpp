@@ -10,8 +10,8 @@ CLogger::~CLogger() {
 }
 
 bool CLogger::Init() {
-	auto logger = spdlog::daily_logger_mt("daily_logger", "logs/forward.log", 2, 30);
-	spdlog::set_pattern("[%Y-%m-%d %T][thread %t][%l]%v");
+	auto logger = spdlog::daily_logger_mt("daily_logger", "logs/forward.log", 0, 0, true, 5);
+	spdlog::set_pattern("[%Y-%m-%d %T][thread %t] [%@,%!] [%l]%v");
 	spdlog::set_default_logger(logger);
 	spdlog::set_level(spdlog::level::debug);
 	spdlog::flush_on(spdlog::level::info);

@@ -87,7 +87,7 @@ bool CNotifyHttpServer::Work() {
 			<<record.response
 			<< std::endl;
 
-		spdlog::info("转发消息[/notify],到http://{}:{}, 请求类型:{}, 消息内容:{},转发状态:{},转发状态描述:{},转发响应内容:{}",
+		SPDLOG_INFO("转发消息[/notify],到http://{}:{}, 请求类型:{}, 消息内容:{},转发状态:{},转发状态描述:{},转发响应内容:{}",
 			config_->GetValueAsString("forward", "host", "localhost"),
 			config_->GetValueAsUint32("forward", "port", 9527),
 			req.get_header_value("Content-Type"),
@@ -114,6 +114,7 @@ bool CNotifyHttpServer::Work() {
 		});
 
 	server_.listen("0.0.0.0", config_->GetValueAsUint32("server", "port", 9527));
+
 	ExitTask();
 	_endthreadex(0);
 	return true;
