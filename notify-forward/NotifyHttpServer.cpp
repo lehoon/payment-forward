@@ -113,7 +113,7 @@ bool CNotifyHttpServer::Work() {
 		std::cout << method << "  " << url << std::endl;
 		});
 
-	server_.listen("0.0.0.0", config_->GetValueAsUint32("server", "port", 9527));
+	server_.listen(config_->GetValueAsString("server", "host", "localhost"), config_->GetValueAsUint32("server", "port", 9527));
 
 	ExitTask();
 	_endthreadex(0);
