@@ -1,4 +1,5 @@
-#include "Logger.h"
+ï»¿#include "Logger.h"
+#include "common.h"
 #include "json.h"
 #include "json_object.h"
 #include "UnionHttpProxyServer.h"
@@ -95,23 +96,23 @@ bool CUnionHttpProxyServer::Work() {
 
 		databaseClient_.InsertUnionForwardRecord(record);
 
-		std::cout << "×ª·¢ÏûÏ¢[" << "/pay/gateway"
-			<< "], µ½"
+		std::cout << "è½¬å‘æ¶ˆæ¯[" << "/pay/gateway"
+			<< "], åˆ°"
 			<< forward_host_
 			<< "/pay/gateway"
-			<< ", ÇëÇóÀàÐÍ:"
+			<< ", è¯·æ±‚ç±»åž‹:"
 			<< req.get_header_value("Content-Type")
-			<< ", ÏûÏ¢ÄÚÈÝ:"
+			<< ", æ¶ˆæ¯å†…å®¹:"
 			<< content
-			<< ",×ª·¢×´Ì¬:"
+			<< ",è½¬å‘çŠ¶æ€:"
 			<< record.status
-			<< ",×ª·¢×´Ì¬ÃèÊö:"
+			<< ",è½¬å‘çŠ¶æ€æè¿°:"
 			<< record.reason
-			<< ",×ª·¢ÏìÓ¦ÄÚÈÝ:"
+			<< ",è½¬å‘å“åº”å†…å®¹:"
 			<< record.response
 			<< std::endl;
 
-		SPDLOG_INFO("×ª·¢[{}]ÏûÏ¢µ½{}{}, ÇëÇóÀàÐÍ:{}, ÏûÏ¢ÄÚÈÝ:{},×ª·¢×´Ì¬:{},×ª·¢×´Ì¬ÃèÊö:{},×ª·¢ÏìÓ¦ÄÚÈÝ:{}",
+		SPDLOG_INFO("è½¬å‘[{}]æ¶ˆæ¯åˆ°{}{}, è¯·æ±‚ç±»åž‹:{}, æ¶ˆæ¯å†…å®¹:{},è½¬å‘çŠ¶æ€:{},è½¬å‘çŠ¶æ€æè¿°:{},è½¬å‘å“åº”å†…å®¹:{}",
 			"post",
 			forward_host_,
 			"/pay/gateway",
@@ -122,7 +123,7 @@ bool CUnionHttpProxyServer::Work() {
 			record.response);
 		});
 
-	std::cout << "µ±Ç°×¢²áµÄUnionPay Forward×ª·¢url¹æÔòÈçÏÂ:" << std::endl;
+	std::cout << "å½“å‰æ³¨å†Œçš„UnionPay Forwardè½¬å‘urlè§„åˆ™å¦‚ä¸‹:" << std::endl;
 	server_.Walk([](const std::string method, std::string url) {
 		std::cout << method << "  " << url << std::endl;
 		});
@@ -131,7 +132,7 @@ bool CUnionHttpProxyServer::Work() {
 	//}
 
 	bool isRunning = server_.listen(
-		config_->GetValueAsString("unionpay_forward", "proxy.host", "localhost"), 
+		config_->GetValueAsString("unionpay_forward", "proxy.host", "localhost"),
 		config_->GetValueAsUint32("unionpay_forward", "proxy.port", 9528));
 
 	ExitTask();

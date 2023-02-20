@@ -88,7 +88,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;CPPHTTPLIB_OPENSSL_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files (x86)\OpenSSL-Win32\include;$(ProjectDir)\3rdParty\include;D:\home\develop\github\cpp-ext\logger\spdlog\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -106,7 +106,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;CPPHTTPLIB_OPENSSL_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files (x86)\OpenSSL-Win32\include;$(ProjectDir)\3rdParty\include;D:\home\develop\github\cpp-ext\logger\spdlog\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -158,6 +158,8 @@
     <ClCompile Include="CppSQLite3.cpp" />
     <ClCompile Include="DatabaseClient.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="json.cpp" />
+    <ClCompile Include="json_string.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Md5.cpp" />
     <ClCompile Include="payment-forward.cpp" />
@@ -165,9 +167,6 @@
     <ClCompile Include="NotifyHttpProxyServer.cpp" />
     <ClCompile Include="UnionHttpProxyServer.cpp" />
     <ClCompile Include="WorkThread.cpp" />
-    <ClCompile Include="json.cpp" />
-    <ClCompile Include="json_object.cpp" />
-    <ClCompile Include="json_string.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Configure.h" />

@@ -1,7 +1,5 @@
-#ifndef NOTIFY_FORWARD_UNION_HTTP_SERVER_H_
+﻿#ifndef NOTIFY_FORWARD_UNION_HTTP_SERVER_H_
 #define NOTIFY_FORWARD_UNION_HTTP_SERVER_H_
-
-#define CPPHTTPLIB_OPENSSL_SUPPORT
 
 #include "httplib.h"
 #include "Configure.h"

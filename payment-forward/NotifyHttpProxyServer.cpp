@@ -1,4 +1,5 @@
-#include "Logger.h"
+ï»¿#include "Logger.h"
+#include "common.h"
 #include "json.h"
 #include "json_object.h"
 #include "NotifyHttpProxyServer.h"
@@ -86,23 +87,23 @@ bool CNotifyHttpProxyServer::Work() {
 
 				databaseClient_.InsertNotifyForwardRecord(record);
 
-				std::cout << "×ª·¢GetÏûÏ¢[" << rule->origin_url
-					<< "], µ½"
+				std::cout << "è½¬å‘Getæ¶ˆæ¯[" << rule->origin_url
+					<< "], åˆ°"
 					<< forward_host_
 					<< rule->target_url
-					<< ", ÇëÇóÀàÐÍ:"
+					<< ", è¯·æ±‚ç±»åž‹:"
 					<< req.get_header_value("Content-Type")
-					<< ", ÏûÏ¢ÄÚÈÝ:"
+					<< ", æ¶ˆæ¯å†…å®¹:"
 					<< content
-					<< ",×ª·¢×´Ì¬:"
+					<< ",è½¬å‘çŠ¶æ€:"
 					<< record.status
-					<< ",×ª·¢×´Ì¬ÃèÊö:"
+					<< ",è½¬å‘çŠ¶æ€æè¿°:"
 					<< record.reason
-					<< ",×ª·¢ÏìÓ¦ÄÚÈÝ:"
+					<< ",è½¬å‘å“åº”å†…å®¹:"
 					<< record.response
 					<< std::endl;
 
-				SPDLOG_INFO("×ª·¢ÏûÏ¢[] [{}],µ½{}/{}, ÇëÇóÀàÐÍ:{}, ÏûÏ¢ÄÚÈÝ:{},×ª·¢×´Ì¬:{},×ª·¢×´Ì¬ÃèÊö:{},×ª·¢ÏìÓ¦ÄÚÈÝ:{}",
+				SPDLOG_INFO("è½¬å‘æ¶ˆæ¯[] [{}],åˆ°{}/{}, è¯·æ±‚ç±»åž‹:{}, æ¶ˆæ¯å†…å®¹:{},è½¬å‘çŠ¶æ€:{},è½¬å‘çŠ¶æ€æè¿°:{},è½¬å‘å“åº”å†…å®¹:{}",
 					rule->origin_url,
 					forward_host_,
 					rule->target_url,
@@ -114,7 +115,7 @@ bool CNotifyHttpProxyServer::Work() {
 				});
 		}
 		else if (rule->method.compare("POST") == 0) {
-			server_.Post(rule->origin_url, [&,rule](const httplib::Request& req, httplib::Response& rsp) {
+			server_.Post(rule->origin_url, [&, rule](const httplib::Request& req, httplib::Response& rsp) {
 				std::string content = req.body;
 				httplib::Client forward_client(
 					config_->GetValueAsString("notify_forward", "forward.host", "localhost"),
@@ -150,23 +151,23 @@ bool CNotifyHttpProxyServer::Work() {
 
 				databaseClient_.InsertNotifyForwardRecord(record);
 
-				std::cout << "×ª·¢PostÏûÏ¢[" << rule->origin_url
-					<< "], µ½"
+				std::cout << "è½¬å‘Postæ¶ˆæ¯[" << rule->origin_url
+					<< "], åˆ°"
 					<< forward_host_
 					<< rule->target_url
-					<< ", ÇëÇóÀàÐÍ:"
+					<< ", è¯·æ±‚ç±»åž‹:"
 					<< req.get_header_value("Content-Type")
-					<< ", ÏûÏ¢ÄÚÈÝ:"
+					<< ", æ¶ˆæ¯å†…å®¹:"
 					<< content
-					<< ",×ª·¢×´Ì¬:"
+					<< ",è½¬å‘çŠ¶æ€:"
 					<< record.status
-					<< ",×ª·¢×´Ì¬ÃèÊö:"
+					<< ",è½¬å‘çŠ¶æ€æè¿°:"
 					<< record.reason
-					<< ",×ª·¢ÏìÓ¦ÄÚÈÝ:"
+					<< ",è½¬å‘å“åº”å†…å®¹:"
 					<< record.response
 					<< std::endl;
 
-				SPDLOG_INFO("×ª·¢[{}]ÏûÏ¢µ½{}{}, ÇëÇóÀàÐÍ:{}, ÏûÏ¢ÄÚÈÝ:{},×ª·¢×´Ì¬:{},×ª·¢×´Ì¬ÃèÊö:{},×ª·¢ÏìÓ¦ÄÚÈÝ:{}",
+				SPDLOG_INFO("è½¬å‘[{}]æ¶ˆæ¯åˆ°{}{}, è¯·æ±‚ç±»åž‹:{}, æ¶ˆæ¯å†…å®¹:{},è½¬å‘çŠ¶æ€:{},è½¬å‘çŠ¶æ€æè¿°:{},è½¬å‘å“åº”å†…å®¹:{}",
 					rule->method,
 					forward_host_,
 					rule->target_url,
@@ -179,7 +180,7 @@ bool CNotifyHttpProxyServer::Work() {
 		}
 	}
 
-	std::cout << "µ±Ç°×¢²áµÄNotify Forward×ª·¢url¹æÔòÈçÏÂ:" << std::endl;
+	std::cout << "å½“å‰æ³¨å†Œçš„Notify Forwardè½¬å‘urlè§„åˆ™å¦‚ä¸‹:" << std::endl;
 	server_.Walk([](const std::string method, std::string url) {
 		std::cout << method << "  " << url << std::endl;
 		});

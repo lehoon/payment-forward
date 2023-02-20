@@ -48,15 +48,6 @@
     <ClCompile Include="NotifyHttpProxyServer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="json.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="json_object.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="json_string.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="json.h">
       <Filter>头文件</Filter>
     </ClCompile>
@@ -65,6 +56,12 @@
     </ClCompile>
     <ClCompile Include="json_string.h">
       <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="json.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="json_string.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
