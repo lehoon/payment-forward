@@ -1,8 +1,8 @@
 /.vs
 /x64
-/notify-forward/x64
+/payment-forward/x64
 /Debug
 /Release
-/notify-forward/Debug
-/notify-forward/Release
-/notify-forward/logs
+/payment-forward/Debug
+/payment-forward/Release
+/payment-forward/logs
