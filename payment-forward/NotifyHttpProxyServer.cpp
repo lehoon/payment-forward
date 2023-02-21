@@ -1,6 +1,6 @@
 ﻿#include "Logger.h"
-#include "common.h"
 #include "json.h"
+#include "DateTime.h"
 #include "json_object.h"
 #include "NotifyHttpProxyServer.h"
 
@@ -18,6 +18,12 @@ bool CNotifyHttpProxyServer::InitTask() {
 	_get_forward_client();
 	std::string forward_rule_string = config_->GetValueAsString("notify_forward", "forward.rule", "[]");
 	ForwarRuleList ruleList = JsonObject::Json2ForwarRuleList(forward_rule_string);
+
+	if (ruleList.empty()) {
+		SPDLOG_INFO("未定义转发规则,代理程序退出");
+		return false;
+	}
+
 	forward_rule_list_.swap(ruleList);
 	databaseClient_.Open();
 	return true;
@@ -50,7 +56,8 @@ bool CNotifyHttpProxyServer::Work() {
 	server_.set_base_dir("./");
 
 	for (auto rule = forward_rule_list_.begin(); rule != forward_rule_list_.end(); rule++) {
-		std::cout << rule->method << "," << rule->origin_url << "," << rule->target_url << std::endl;
+		SPDLOG_INFO("method:{}, {} ===> {}{}", rule->method, rule->origin_url, forward_host_, rule->target_url);
+
 		if (rule->method.compare("GET") == 0) {
 			server_.Get(rule->origin_url, [&, rule](const httplib::Request& req, httplib::Response& rsp) {
 				std::string content = req.body;
@@ -87,7 +94,10 @@ bool CNotifyHttpProxyServer::Work() {
 
 				databaseClient_.InsertNotifyForwardRecord(record);
 
-				std::cout << "转发Get消息[" << rule->origin_url
+				std::cout 
+					<< DateTime::getCurrentDateTime() 
+					<< "转发Get消息[" 
+					<< rule->origin_url
 					<< "], 到"
 					<< forward_host_
 					<< rule->target_url
@@ -151,7 +161,10 @@ bool CNotifyHttpProxyServer::Work() {
 
 				databaseClient_.InsertNotifyForwardRecord(record);
 
-				std::cout << "转发Post消息[" << rule->origin_url
+				std::cout 
+					<< DateTime::getCurrentDateTime() 
+					<< "转发Post消息[" 
+					<< rule->origin_url
 					<< "], 到"
 					<< forward_host_
 					<< rule->target_url
@@ -181,17 +194,17 @@ bool CNotifyHttpProxyServer::Work() {
 	}
 
 	std::cout << "当前注册的Notify Forward转发url规则如下:" << std::endl;
-	server_.Walk([](const std::string method, std::string url) {
-		std::cout << method << "  " << url << std::endl;
-		});
+	//server_.Walk([](const std::string method, std::string url) {
+	//	std::cout << method << "  " << url << std::endl;
+	//	});
 
 	for (auto iter = forward_rule_list_.begin(); iter != forward_rule_list_.end(); iter++) {
-		std::cout << iter->method << ": " << iter->origin_url << " ===> " << iter->target_url << std::endl;
+		std::cout << iter->method << ": " << iter->origin_url << " ===> " << forward_host_ << iter->target_url << std::endl;
 	}
 
 	server_.listen(
-		config_->GetValueAsString("notify_proxy_server", "proxy.host", "localhost"),
-		config_->GetValueAsUint32("notify_proxy_server", "proxy.port", 9527));
+		config_->GetValueAsString("notify_forward", "proxy.host", "localhost"),
+		config_->GetValueAsUint32("notify_forward", "proxy.port", 9527));
 
 	ExitTask();
 	_endthreadex(0);

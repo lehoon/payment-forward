@@ -22,17 +22,27 @@ int main()
 
 		CLogger::Init();
 		CNotifyHttpProxyServer notifyHttpProxyServer(&config);
-		notifyHttpProxyServer.InitTask();
-		if (!notifyHttpProxyServer.StartTask()) {
-			SPDLOG_ERROR("notify http proxy server启动失败.");
-			std::cout << "notify http server启动失败." << std::endl;
+		if (!notifyHttpProxyServer.InitTask()) {
+			SPDLOG_ERROR("消息代理程序未定义规则,未启动代理程序");
+		}
+		else {
+			if (!notifyHttpProxyServer.StartTask()) {
+				SPDLOG_ERROR("notify http proxy server启动失败.");
+				std::cout << "notify http server启动失败." << std::endl;
+			}
 		}
 
+		Sleep(3000);
+
 		CUnionHttpProxyServer unionHttpProxyServer(&config);
-		unionHttpProxyServer.InitTask();
-		if (!unionHttpProxyServer.StartTask()) {
-			SPDLOG_ERROR("union pay http proxy server启动失败.");
-			std::cout << "union pay http server启动失败." << std::endl;
+		if (!unionHttpProxyServer.InitTask()) {
+			SPDLOG_ERROR("消息代理程序未定义规则,未启动代理程序");
+		}
+		else {
+			if (!unionHttpProxyServer.StartTask()) {
+				SPDLOG_ERROR("union pay http proxy server启动失败.");
+				std::cout << "union pay http server启动失败." << std::endl;
+			}
 		}
 
 		static base::semaphore sem;

@@ -22,7 +22,7 @@ public:
 	bool Work();
 
 private:
-	httplib::Client _get_forward_client();
+	void _get_forward_client();
 
 private:
 	httplib::Server server_;
