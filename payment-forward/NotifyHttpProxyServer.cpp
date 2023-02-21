@@ -94,9 +94,9 @@ bool CNotifyHttpProxyServer::Work() {
 
 				databaseClient_.InsertNotifyForwardRecord(record);
 
-				std::cout 
-					<< DateTime::getCurrentDateTime() 
-					<< "转发Get消息[" 
+				std::cout
+					<< DateTime::getCurrentDateTime()
+					<< "转发Get消息["
 					<< rule->origin_url
 					<< "], 到"
 					<< forward_host_
@@ -161,9 +161,9 @@ bool CNotifyHttpProxyServer::Work() {
 
 				databaseClient_.InsertNotifyForwardRecord(record);
 
-				std::cout 
-					<< DateTime::getCurrentDateTime() 
-					<< "转发Post消息[" 
+				std::cout
+					<< DateTime::getCurrentDateTime()
+					<< "转发Post消息["
 					<< rule->origin_url
 					<< "], 到"
 					<< forward_host_
@@ -206,7 +206,6 @@ bool CNotifyHttpProxyServer::Work() {
 		config_->GetValueAsString("notify_forward", "proxy.host", "localhost"),
 		config_->GetValueAsUint32("notify_forward", "proxy.port", 9527));
 
-	ExitTask();
 	_endthreadex(0);
 	return true;
 }

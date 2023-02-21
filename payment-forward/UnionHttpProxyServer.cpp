@@ -130,14 +130,13 @@ bool CUnionHttpProxyServer::Work() {
 	//	std::cout << method << "  " << url << std::endl;
 	//	});
 	for (auto iter = forward_rule_list_.begin(); iter != forward_rule_list_.end(); iter++) {
-		std::cout << iter->method <<": " << iter->origin_url << " ===> " << forward_host_ << iter->target_url << std::endl;
+		std::cout << iter->method << ": " << iter->origin_url << " ===> " << forward_host_ << iter->target_url << std::endl;
 	}
 
 	bool isRunning = server_.listen(
 		config_->GetValueAsString("unionpay_forward", "proxy.host", "localhost"),
 		config_->GetValueAsUint32("unionpay_forward", "proxy.port", 9528));
 
-	ExitTask();
 	_endthreadex(0);
 	return true;
 }
