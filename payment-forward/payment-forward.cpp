@@ -7,12 +7,24 @@
 #include "Logger.h"
 #include "semaphore.h"
 #include "Configure.h"
+#include "socketutil.h"
 #include "NotifyHttpClient.h"
 #include "NotifyHttpProxyServer.h"
 #include "UnionHttpProxyServer.h"
 
 int main()
 {
+	std::string host = "localhost";
+	std::string ip = "";
+	if (is_remote_server_alive(host, ip, 80, AF_UNSPEC, 0, 3)) {
+		std::cout << "is alive" << std::endl;
+	}
+	else {
+		std::cout << "is not alive" << std::endl;
+	}
+
+	return 0;
+
 	{
 		CConfigure config;
 		if (config.Init("./config.ini")) {

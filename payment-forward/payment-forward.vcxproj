@@ -167,6 +167,7 @@
     <ClCompile Include="payment-forward.cpp" />
     <ClCompile Include="NotifyHttpClient.cpp" />
     <ClCompile Include="NotifyHttpProxyServer.cpp" />
+    <ClCompile Include="socketutil.cpp" />
     <ClCompile Include="UnionHttpProxyServer.cpp" />
     <ClCompile Include="WorkThread.cpp" />
   </ItemGroup>
@@ -187,6 +188,7 @@
     <ClInclude Include="NotifyHttpProxyServer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="semaphore.h" />
+    <ClInclude Include="socketutil.h" />
     <ClInclude Include="UnionHttpProxyServer.h" />
     <ClInclude Include="WorkThread.h" />
   </ItemGroup>
