@@ -22,6 +22,8 @@ int main()
 		}
 
 		CLogger::Init();
+		config.Dump2LogFile();
+
 		CNotifyHttpProxyServer notifyHttpProxyServer(&config);
 		if (!notifyHttpProxyServer.InitTask()) {
 			SPDLOG_ERROR("消息代理程序未定义规则,未启动代理程序");
@@ -33,6 +35,7 @@ int main()
 			}
 		}
 
+		SPDLOG_INFO("启动银联通知转发服务成功");
 		Sleep(3000);
 
 		CUnionHttpProxyServer unionHttpProxyServer(&config);
@@ -46,12 +49,28 @@ int main()
 			}
 		}
 
+		SPDLOG_INFO("启动银联请求转发服务成功");
 		static base::semaphore sem;
-		signal(SIGINT, [](int) { sem.post(); });
+		signal(SIGINT, [](int) { 
+			signal(SIGINT, SIG_IGN);
+			sem.post(); 
+		});
 		sem.wait();
 
-		unionHttpProxyServer.ExitTask();
-		notifyHttpProxyServer.ExitTask();
+		SPDLOG_INFO("接收到退出系统信号,开始退出银联请求转发服务");
+		CNotifyHttpClient::SendShutdownRequest(config.GetValueAsString("unionpay_forward", "proxy.host", "localhost"),
+				config.GetValueAsUint32("unionpay_forward", "proxy.port", 9528),
+				config.GetValueAsString("manager", "key", ""));
+		Sleep(2000);
+		
+		SPDLOG_INFO("退出银联请求转发服务成功");
+		SPDLOG_INFO("接收到退出系统信号,开始退出银联通知转发服务");
+		CNotifyHttpClient::SendShutdownRequest(config.GetValueAsString("notify_forward", "proxy.host", "localhost"),
+				config.GetValueAsUint32("notify_forward", "proxy.port", 9527),
+				config.GetValueAsString("manager", "key", ""));
+		Sleep(2000);
+		SPDLOG_INFO("退出银联通知转发服务成功");
+		SPDLOG_INFO("程序退出");
 		CLogger::Close();
 	}
 

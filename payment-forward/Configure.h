@@ -1,5 +1,4 @@
-﻿#ifndef NOTIFY_FORWARD_NOTIFY_CONFIGURE_H_
-#define NOTIFY_FORWARD_NOTIFY_CONFIGURE_H_
+﻿#pragma once
 
 #include <string>
 #include <map>
@@ -17,6 +16,7 @@ public:
 
 public:
 	int Init(const std::string& file);
+	void Dump2LogFile();
 
 	std::string GetValueAsString(const std::string& group,
 		const std::string& key,
@@ -34,9 +34,4 @@ public:
 private:
 	std::map<std::string, std::map<std::string, std::string> > items_;
 };
-
-
-#endif // !NOTIFY_FORWARD_NOTIFY_CONFIGURE_H_
-
-
 

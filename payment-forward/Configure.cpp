@@ -1,7 +1,6 @@
 ﻿#include "Configure.h"
-
 #include "Md5.h"
-
+#include "Logger.h"
 #include <stdlib.h>
 #include <iostream>
 
@@ -26,6 +25,7 @@ private:
 		kGroupRow,
 		kValueRow,
 	};
+
 };
 
 ConfigFile::ConfigFile() : pf_(NULL) {}
@@ -108,10 +108,10 @@ int ConfigFile::ParseFile(std::map<std::string, std::map<std::string, std::strin
 	std::string key;
 	std::string value;
 	std::string content;
+
 	while ((type = GetLine(line)) != kErrorRow) {
 		content.append(line);
 
-		//处理行
 		if (type == kGroupRow) {
 			group = line;
 			group_items[group] = std::map<std::string, std::string>();
@@ -129,7 +129,6 @@ int ConfigFile::ParseFile(std::map<std::string, std::map<std::string, std::strin
 	return RESULT_OK;
 }
 
-
 CConfigure::CConfigure() {
 
 }
@@ -145,6 +144,23 @@ int CConfigure::Init(const std::string& file) {
 	//解析具体配置文件:
 	result = config.ParseFile(items_);
 	return result;
+}
+
+void CConfigure::Dump2LogFile() {
+	for (auto iter = items_.begin(); iter != items_.end(); iter++) {
+
+		if (iter->first.compare("manager") == 0) {
+			continue;
+		}
+
+		SPDLOG_INFO("打印配置文件项section:[{}]", iter->first);
+		auto kv = iter->second;
+
+
+		for (auto iter2 = kv.begin(); iter2 != kv.end(); iter2++) {
+			SPDLOG_INFO("打印配置参数:                  {}====>>{}", iter2->first, iter2->second);
+		}
+	}
 }
 
 std::string CConfigure::GetValueAsString(const std::string& group,

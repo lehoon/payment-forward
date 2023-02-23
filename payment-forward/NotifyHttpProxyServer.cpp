@@ -1,4 +1,5 @@
-﻿#include "Logger.h"
+﻿#include "httplib.h"
+#include "Logger.h"
 #include "json.h"
 #include "DateTime.h"
 #include "json_object.h"
@@ -30,7 +31,6 @@ bool CNotifyHttpProxyServer::InitTask() {
 }
 
 bool CNotifyHttpProxyServer::ExitTask() {
-	server_.stop();
 	return true;
 }
 
@@ -53,6 +53,7 @@ void CNotifyHttpProxyServer::_get_forward_client() {
 }
 
 bool CNotifyHttpProxyServer::Work() {
+	httplib::Server server_;
 	server_.set_base_dir("./");
 
 	for (auto rule = forward_rule_list_.begin(); rule != forward_rule_list_.end(); rule++) {
@@ -194,6 +195,7 @@ bool CNotifyHttpProxyServer::Work() {
 	}
 
 	std::cout << "当前注册的Notify Forward转发url规则如下:" << std::endl;
+
 	//server_.Walk([](const std::string method, std::string url) {
 	//	std::cout << method << "  " << url << std::endl;
 	//	});
@@ -201,6 +203,21 @@ bool CNotifyHttpProxyServer::Work() {
 	for (auto iter = forward_rule_list_.begin(); iter != forward_rule_list_.end(); iter++) {
 		std::cout << iter->method << ": " << iter->origin_url << " ===> " << forward_host_ << iter->target_url << std::endl;
 	}
+
+	std::cout << std::endl;
+	std::cout << std::endl;
+	
+	server_.Get(R"(/forward/shutdown)", [&](const httplib::Request& req, httplib::Response& rsp) {
+		std::string key = req.get_param_value("key");
+		std::string shutdownKey = config_->GetValueAsString("manager", "key", "");
+		if (shutdownKey.compare(key) != 0) {
+			SPDLOG_ERROR("非法请求关闭本地服务,key={}", key);
+			rsp.set_content("操作失败,密钥不正确.", "text/html; charset=utf-8");
+			return;
+		}
+
+		server_.stop();
+		});
 
 	server_.listen(
 		config_->GetValueAsString("notify_forward", "proxy.host", "localhost"),

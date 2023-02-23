@@ -1,7 +1,6 @@
 ﻿#ifndef NOTIFY_FORWARD_NOTIFY_HTTP_SERVER_H_
 #define NOTIFY_FORWARD_NOTIFY_HTTP_SERVER_H_
 
-#include "httplib.h"
 #include "Configure.h"
 #include "json_object.h"
 #include "DatabaseClient.h"
@@ -25,7 +24,6 @@ public:
 private:
 	void _get_forward_client();
 private:
-	httplib::Server server_;
 	HANDLE threadHandle_;
 	unsigned int threadId_;
 	CConfigure* config_;

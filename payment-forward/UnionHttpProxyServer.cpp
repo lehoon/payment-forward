@@ -1,4 +1,5 @@
-﻿#include "Logger.h"
+﻿#include "httplib.h"
+#include "Logger.h"
 #include "json.h"
 #include "DateTime.h"
 #include "json_object.h"
@@ -30,7 +31,6 @@ bool CUnionHttpProxyServer::InitTask() {
 
 bool CUnionHttpProxyServer::ExitTask() {
 	forward_rule_list_.clear();
-	server_.stop();
 	return true;
 }
 
@@ -50,15 +50,13 @@ void CUnionHttpProxyServer::_get_forward_client() {
 }
 
 bool CUnionHttpProxyServer::Work() {
+	httplib::Server server_;
 	server_.set_base_dir("./");
 
 	for (auto rule = forward_rule_list_.begin(); rule != forward_rule_list_.end(); rule++) {
 		SPDLOG_INFO("method:{}, {} ===> {}{}", rule->method, rule->origin_url, forward_host_, rule->target_url);
 
-		if (rule->method.compare("GET") == 0) {
-
-		}
-		else if (rule->method.compare("POST") == 0) {
+		if (rule->method.compare("POST") == 0) {
 			server_.Post(rule->origin_url, [&, rule](const httplib::Request& req, httplib::Response& rsp) {
 				std::string content = req.body;
 				httplib::Client forward_client(forward_host_);
@@ -126,12 +124,28 @@ bool CUnionHttpProxyServer::Work() {
 	}
 
 	std::cout << "当前注册的UnionPay Forward转发url规则如下:" << std::endl;
+
 	//server_.Walk([](const std::string method, std::string url) {
 	//	std::cout << method << "  " << url << std::endl;
 	//	});
 	for (auto iter = forward_rule_list_.begin(); iter != forward_rule_list_.end(); iter++) {
 		std::cout << iter->method << ": " << iter->origin_url << " ===> " << forward_host_ << iter->target_url << std::endl;
 	}
+
+	std::cout << std::endl;
+	std::cout << std::endl;
+	
+	server_.Get(R"(/forward/shutdown)", [&](const httplib::Request& req, httplib::Response& rsp) {
+		std::string key = req.get_param_value("key");
+		std::string shutdownKey = config_->GetValueAsString("manager", "key", "");
+		if (shutdownKey.compare(key) != 0) {
+			SPDLOG_ERROR("非法请求关闭本地服务,key={}", key);
+			rsp.set_content("操作失败,密钥不正确.", "text/html; charset=utf-8");
+			return;
+		}
+
+		server_.stop();
+		});
 
 	bool isRunning = server_.listen(
 		config_->GetValueAsString("unionpay_forward", "proxy.host", "localhost"),

@@ -10,7 +10,7 @@ private:
 	~CNotifyHttpClient() {}
 
 public:
-	static void SendShutdownMessage(std::string host, int port, std::string& key);
+	static void SendShutdownRequest(std::string host, int port, std::string key);
 };
 
 #endif // !NOTIFY_FORWARD_NOTIFY_HTTP_CLIENT_H_
