@@ -14,6 +14,17 @@
 
 int main()
 {
+	HWND hwnd = GetConsoleWindow();
+	HMENU hmenu = GetSystemMenu(hwnd, false);
+	RemoveMenu(hmenu, SC_CLOSE, MF_BYCOMMAND);
+	//LONG style = GetWindowLong(hwnd, GWL_STYLE);
+	//style &= ~(WS_MINIMIZEBOX);
+	//SetWindowLong(hwnd, GWL_STYLE, style);
+	SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+	ShowWindow(hwnd, SW_SHOWNORMAL);
+	DestroyMenu(hmenu);
+	ReleaseDC(hwnd, NULL);
+
 	{
 		CConfigure config;
 		if (config.Init("./config.ini")) {
