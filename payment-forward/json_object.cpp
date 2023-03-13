@@ -5,4 +5,6 @@
 #include "json_string.h"
 
 
-
+std::string IotPaymentRecord::toString() {
+	return JsonObject::toJSONString(*this);
+}

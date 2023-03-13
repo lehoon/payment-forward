@@ -19,6 +19,7 @@ private:
 public:
 	static JsonString toJSONString(const std::map <JsonString, JsonString>& mapinfo);
 	static JsonString toJSONString(const httplib::Headers & header);
+	static JsonString toJSONString(IotPaymentRecord&);
 	static long getLong(const JsonString& jsonString, const JsonString& fieldname);
 
 	static int markRequired(const rapidjson::Document& d, const JsonString& requiredField);
@@ -27,6 +28,8 @@ public:
 public:
 public:
 	static ForwarRuleList Json2ForwarRuleList(const JsonString&);
+	static int Json2IotBaseResponseVo(const JsonString&, IotBaseResponseVo&);
+	static int Json2IotPaymentRecord(const JsonString&, IotPaymentRecord&);
 
 private:
 	static void addStringField(rapidjson::Document& d, const JsonString& k, const JsonString& v);

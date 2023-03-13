@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "CppSQLite3.h"
+#include "json_object.h"
 #include <string>
 
 class CppSQLite3DB;
@@ -31,6 +32,13 @@ public:
 	bool InsertNotifyForwardRecord(ForwardRecord&);
 	bool InsertUnionForwardRecord(ForwardRecord&);
 	bool InsertIotForwardRecord(ForwardRecord&);
+
+
+	////////////////////////////////////////////////////iot///////////////////////////////////////////////
+	bool SubmitIotPaymentRecord(IotPaymentRecord&);
+	bool DeleteIotPaymentRecord();
+	std::vector<IotPaymentRecord> QueryIotPaymentRecord(std::string&, std::string&);
+
 
 private:
 	std::string mDbName;

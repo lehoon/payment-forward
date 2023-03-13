@@ -66,6 +66,24 @@
     <ClCompile Include="IotHttpProxyServer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="IotPayHttpClient.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rsa.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="base64.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="IotUploadFileTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="IotPaymentServer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="httplib.h">
@@ -126,6 +144,24 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="IotHttpProxyServer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IotPayHttpClient.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rsa.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="base64.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IotUploadFileTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IotPaymentServer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -15,6 +15,28 @@ public:
 };
 
 
+class IotBaseResponseVo {
+public:
+	bool success;
+	int  code;
+	std::string message;
+	std::string data;
+};
+
+class IotPaymentRecord {
+public:
+	std::string orderCode;
+	std::string orgCode;
+	std::string channelCode;
+	std::string accountCode;
+	std::string totalFee;
+	std::string orderDate;
+
+public:
+	std::string toString();
+};
+
+
 typedef std::list<ForwardRuleOne> ForwarRuleList;
 typedef std::unordered_map<std::string, ForwardRuleOne> ForwardRule;
 #endif /* GATEWAY_JSON_OBJECT_H_ */

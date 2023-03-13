@@ -4,7 +4,6 @@
 #include <limits.h>
 #include <string>
 
-#define  int64 __int64
 const int SECONDS_IN_ONEDAY = 86400;
 
 class DateTime {
@@ -16,6 +15,11 @@ public:
 	static std::string getCurrentTime();
 	static std::string get14CurrentTime();
 	static std::string get6CurrentTime();
+	static std::string get8CurrentTime();
+	static std::string getYearMonthDay();
+
+public:
+	static std::string getCurrentMilliSecond();
 
 public:
 	unsigned int Hour();

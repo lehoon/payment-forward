@@ -8,10 +8,13 @@
 #include "semaphore.h"
 #include "Configure.h"
 #include "socketutil.h"
+#include "WorkThread.h"
+#include "IotUploadFileTask.h"
 #include "NotifyHttpClient.h"
 #include "IotHttpProxyServer.h"
 #include "NotifyHttpProxyServer.h"
 #include "UnionHttpProxyServer.h"
+#include "IotPaymentServer.h"
 
 int main()
 {
@@ -35,6 +38,14 @@ int main()
 
 		CLogger::Init();
 		config.Dump2LogFile();
+
+		IotUploadFileTask uploadFileTask(&config);
+		WorkThread iotUploadThread(&uploadFileTask);
+
+		if (!iotUploadThread.StartThread()) {
+			std::cout << "上传文件定时任务启动失败,程序退出." << std::endl;
+			return -1;
+		}
 
 		CNotifyHttpProxyServer notifyHttpProxyServer(&config);
 		if (!notifyHttpProxyServer.InitTask()) {
@@ -75,6 +86,17 @@ int main()
 			}
 		}
 
+		CIotPaymentHttpServer iotHttpServer(&config);
+		if (!iotHttpServer.InitTask()) {
+			SPDLOG_ERROR("未启动iot payment server程序");
+		}
+		else {
+			if (!iotHttpServer.StartTask()) {
+				SPDLOG_ERROR("iot http server启动失败.");
+				std::cout << "iot http server启动失败." << std::endl;
+			}
+		}
+
 		static base::semaphore sem;
 		signal(SIGINT, [](int) { 
 			signal(SIGINT, SIG_IGN);
@@ -111,6 +133,15 @@ int main()
 		Sleep(2000);
 		SPDLOG_INFO("退出iot转发服务成功");
 		std::cout << "退出iot转发服务成功" << std::endl;
+
+		std::cout << "开始退出iot服务" << std::endl;
+		CNotifyHttpClient::SendShutdownRequest(config.GetValueAsString("iot_server", "host", "localhost"),
+			config.GetValueAsUint32("iot_server", "port", 9530),
+			config.GetValueAsString("manager", "key", ""));
+		Sleep(2000);
+		SPDLOG_INFO("退出iot转发服务成功");
+		std::cout << "退出iot转发服务成功" << std::endl;
+		iotUploadThread.StopThread();
 		SPDLOG_INFO("程序退出");
 		CLogger::Close();
 	}

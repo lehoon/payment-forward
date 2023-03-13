@@ -54,6 +54,31 @@ std::string DateTime::get6CurrentTime() {
 	return str1;
 }
 
+std::string DateTime::get8CurrentTime() {
+	std::stringstream ss;
+	std::string format = "%Y%m%d";
+	std::chrono::system_clock::time_point a = std::chrono::system_clock::now();
+	time_t t1 = std::chrono::system_clock::to_time_t(a);
+	ss << std::put_time(localtime(&t1), format.c_str());
+	std::string str1 = ss.str();
+	return str1;
+}
+
+std::string DateTime::getYearMonthDay() {
+	std::stringstream ss;
+	std::string format = "%Y-%m-%d";
+	std::chrono::system_clock::time_point a = std::chrono::system_clock::now();
+	time_t t1 = std::chrono::system_clock::to_time_t(a);
+	ss << std::put_time(localtime(&t1), format.c_str());
+	std::string str1 = ss.str();
+	return str1;
+}
+
+std::string DateTime::getCurrentMilliSecond() {
+	auto millisec = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	return std::to_string(millisec);
+}
+
 unsigned int DateTime::Hour() {
 	if (mPDateTime == NULL) return 1;
 	return mPDateTime->tm_hour;

@@ -90,7 +90,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;CPPHTTPLIB_OPENSSL_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\OpenSSL-Win32\include;$(ProjectDir)\3rdParty\include;D:\home\develop\github\cpp-ext\logger\spdlog\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\OpenSSL-Win32\include;$(ProjectDir)\3rdParty\include;D:\home\develop\github\cpp-ext\logger\spdlog\include;$(ProjectDir)\3rdParty\include\libxl;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;CPPHTTPLIB_OPENSSL_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\OpenSSL-Win32\include;$(ProjectDir)\3rdParty\include;D:\home\develop\github\cpp-ext\logger\spdlog\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\OpenSSL-Win32\include;$(ProjectDir)\3rdParty\include;D:\home\develop\github\cpp-ext\logger\spdlog\include;$(ProjectDir)\3rdParty\include\libxl;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -116,7 +116,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Program Files (x86)\OpenSSL-Win32\lib\VC;$(ProjectDir)\3rdParty\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcrypto32MD.lib;libssl32MD.lib;sqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrypto32MD.lib;libssl32MD.lib;sqlite3.lib;libxl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -131,7 +131,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Program Files\OpenSSL-Win64\lib\VC;$(ProjectDir)\3rdParty\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcrypto64MDd.lib;libssl64MDd.lib;sqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrypto64MDd.lib;libssl64MDd.lib;sqlite3.lib;libxl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -154,12 +154,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="base64.cpp" />
     <ClCompile Include="Configure.cpp" />
     <ClCompile Include="CppSQLite3.cpp" />
     <ClCompile Include="DatabaseClient.cpp" />
     <ClCompile Include="DateTime.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="IotHttpProxyServer.cpp" />
+    <ClCompile Include="IotPayHttpClient.cpp" />
+    <ClCompile Include="IotPaymentServer.cpp" />
+    <ClCompile Include="IotUploadFileTask.cpp" />
     <ClCompile Include="json.cpp" />
     <ClCompile Include="json_object.cpp" />
     <ClCompile Include="json_string.cpp" />
@@ -168,11 +172,14 @@
     <ClCompile Include="payment-forward.cpp" />
     <ClCompile Include="NotifyHttpClient.cpp" />
     <ClCompile Include="NotifyHttpProxyServer.cpp" />
+    <ClCompile Include="rsa.cpp" />
     <ClCompile Include="socketutil.cpp" />
     <ClCompile Include="UnionHttpProxyServer.cpp" />
+    <ClCompile Include="util.cpp" />
     <ClCompile Include="WorkThread.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="base64.h" />
     <ClInclude Include="Configure.h" />
     <ClInclude Include="CppSQLite3.h" />
     <ClInclude Include="DatabaseClient.h" />
@@ -180,6 +187,9 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="httplib.h" />
     <ClInclude Include="IotHttpProxyServer.h" />
+    <ClInclude Include="IotPayHttpClient.h" />
+    <ClInclude Include="IotPaymentServer.h" />
+    <ClInclude Include="IotUploadFileTask.h" />
     <ClInclude Include="IThreadWrap.h" />
     <ClInclude Include="json.h" />
     <ClInclude Include="json_object.h" />
@@ -189,9 +199,11 @@
     <ClInclude Include="NotifyHttpClient.h" />
     <ClInclude Include="NotifyHttpProxyServer.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="rsa.h" />
     <ClInclude Include="semaphore.h" />
     <ClInclude Include="socketutil.h" />
     <ClInclude Include="UnionHttpProxyServer.h" />
+    <ClInclude Include="util.h" />
     <ClInclude Include="WorkThread.h" />
   </ItemGroup>
   <ItemGroup>
