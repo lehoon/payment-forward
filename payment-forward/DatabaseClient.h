@@ -9,6 +9,7 @@ typedef struct _ForwardRecordTag {
 	std::string url;
 	std::string originHost;
 	int originPort;
+	std::string header;
 	std::string content;
 	std::string forwardHost;
 	int forwardPort;
@@ -29,6 +30,7 @@ public:
 	bool Open();
 	bool InsertNotifyForwardRecord(ForwardRecord&);
 	bool InsertUnionForwardRecord(ForwardRecord&);
+	bool InsertIotForwardRecord(ForwardRecord&);
 
 private:
 	std::string mDbName;

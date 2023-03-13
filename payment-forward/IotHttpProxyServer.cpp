@@ -1,26 +1,26 @@
-ï»¿#include "httplib.h"
+#include "httplib.h"
 #include "Logger.h"
 #include "json.h"
 #include "DateTime.h"
 #include "json_object.h"
-#include "UnionHttpProxyServer.h"
+#include "IotHttpProxyServer.h"
 
-CUnionHttpProxyServer::CUnionHttpProxyServer(CConfigure* config) : config_(config) {
+CIotHttpProxyServer::CIotHttpProxyServer(CConfigure* config) : config_(config) {
 }
 
-CUnionHttpProxyServer::~CUnionHttpProxyServer() {
+CIotHttpProxyServer::~CIotHttpProxyServer() {
 	if (NULL != threadHandle_) {
 		CloseHandle(threadHandle_);
 	}
 }
 
-bool CUnionHttpProxyServer::InitTask() {
+bool CIotHttpProxyServer::InitTask() {
 	_get_forward_client();
-	std::string forward_rule_string = config_->GetValueAsString("unionpay_forward", "forward.rule", "[]");
+	std::string forward_rule_string = config_->GetValueAsString("iot_forward", "forward.rule", "[]");
 	ForwarRuleList ruleList = JsonObject::Json2ForwarRuleList(forward_rule_string);
 
 	if (ruleList.empty()) {
-		SPDLOG_INFO("æœªå®šä¹‰è½¬å‘è§„åˆ™,ä»£ç†ç¨‹åºé€€å‡º");
+		SPDLOG_INFO("Î´¶¨Òå×ª·¢¹æÔò,´úÀí³ÌÐòÍË³ö");
 		return false;
 	}
 
@@ -29,27 +29,27 @@ bool CUnionHttpProxyServer::InitTask() {
 	return true;
 }
 
-bool CUnionHttpProxyServer::ExitTask() {
+bool CIotHttpProxyServer::ExitTask() {
 	forward_rule_list_.clear();
 	return true;
 }
 
-bool CUnionHttpProxyServer::StartTask() {
+bool CIotHttpProxyServer::StartTask() {
 	threadHandle_ = (HANDLE)_beginthreadex(NULL, 0,
-		CUnionHttpProxyServer::threadFunc, (void*)this, 0, &threadId_);
+		CIotHttpProxyServer::threadFunc, (void*)this, 0, &threadId_);
 	return threadId_ != 0;
 }
 
-unsigned int CUnionHttpProxyServer::threadFunc(void* p) {
-	CUnionHttpProxyServer* threadObj = (CUnionHttpProxyServer*)p;
+unsigned int CIotHttpProxyServer::threadFunc(void* p) {
+	CIotHttpProxyServer* threadObj = (CIotHttpProxyServer*)p;
 	return threadObj->Work();
 }
 
-void CUnionHttpProxyServer::_get_forward_client() {
-	forward_host_ = config_->GetValueAsString("unionpay_forward", "forward.domain", "https://qra.95516.com");
+void CIotHttpProxyServer::_get_forward_client() {
+	forward_host_ = config_->GetValueAsString("iot_forward", "forward.domain", "");
 }
 
-bool CUnionHttpProxyServer::Work() {
+bool CIotHttpProxyServer::Work() {
 	httplib::Server server_;
 	server_.set_base_dir("./");
 
@@ -63,23 +63,22 @@ bool CUnionHttpProxyServer::Work() {
 				forward_client.set_connection_timeout(15);
 				forward_client.set_write_timeout(30);
 				forward_client.set_read_timeout(15);
-				httplib::Headers headers;
 				auto result = forward_client.Post(
 					rule->target_url,
-					headers,
+					req.headers,
 					content,
 					req.get_header_value("Content-Type"));
 
 				ForwardRecord record;
 				record.content = content;
 				record.method = "post";
+				record.header = JsonObject::toJSONString(req.headers);
 				record.url = rule->origin_url;
 				record.originHost = req.remote_addr;
 				record.originPort = req.remote_port;
 				record.forwardHost = forward_host_;
 				record.forwardPort = 80;
 				record.forwardUrl = rule->target_url;
-				record.header = JsonObject::toJSONString(req.headers);
 				record.status = httplib::to_string(result.error());
 
 				//response message to origin server
@@ -90,28 +89,28 @@ bool CUnionHttpProxyServer::Work() {
 					record.status = std::to_string(result->status);
 				}
 
-				databaseClient_.InsertUnionForwardRecord(record);
+				databaseClient_.InsertIotForwardRecord(record);
 
 				std::cout
 					<< DateTime::getCurrentDateTime()
-					<< ",è½¬å‘æ¶ˆæ¯["
+					<< ",×ª·¢ÏûÏ¢["
 					<< rule->origin_url
-					<< "], åˆ°"
+					<< "], µ½"
 					<< forward_host_
 					<< rule->target_url
-					<< ", è¯·æ±‚ç±»åž‹:"
+					<< ", ÇëÇóÀàÐÍ:"
 					<< req.get_header_value("Content-Type")
-					<< ", æ¶ˆæ¯å†…å®¹:"
+					<< ", ÏûÏ¢ÄÚÈÝ:"
 					<< content
-					<< ",è½¬å‘çŠ¶æ€:"
+					<< ",×ª·¢×´Ì¬:"
 					<< record.status
-					<< ",è½¬å‘çŠ¶æ€æè¿°:"
+					<< ",×ª·¢×´Ì¬ÃèÊö:"
 					<< record.reason
-					<< ",è½¬å‘å“åº”å†…å®¹:"
+					<< ",×ª·¢ÏìÓ¦ÄÚÈÝ:"
 					<< record.response
 					<< std::endl;
 
-				SPDLOG_INFO("è½¬å‘[{}]æ¶ˆæ¯åˆ°{}{}, è¯·æ±‚ç±»åž‹:{}, æ¶ˆæ¯å†…å®¹:{},è½¬å‘çŠ¶æ€:{},è½¬å‘çŠ¶æ€æè¿°:{},è½¬å‘å“åº”å†…å®¹:{}",
+				SPDLOG_INFO("×ª·¢[{}]ÏûÏ¢µ½{}{}, ÇëÇóÀàÐÍ:{}, ÏûÏ¢ÄÚÈÝ:{},×ª·¢×´Ì¬:{},×ª·¢×´Ì¬ÃèÊö:{},×ª·¢ÏìÓ¦ÄÚÈÝ:{}",
 					"post",
 					forward_host_,
 					rule->target_url,
@@ -124,7 +123,7 @@ bool CUnionHttpProxyServer::Work() {
 		}
 	}
 
-	std::cout << "å½“å‰æ³¨å†Œçš„UnionPay Forwardè½¬å‘urlè§„åˆ™å¦‚ä¸‹:" << std::endl;
+	std::cout << "µ±Ç°×¢²áµÄiot Forward×ª·¢url¹æÔòÈçÏÂ:" << std::endl;
 
 	//server_.Walk([](const std::string method, std::string url) {
 	//	std::cout << method << "  " << url << std::endl;
@@ -135,13 +134,13 @@ bool CUnionHttpProxyServer::Work() {
 
 	std::cout << std::endl;
 	std::cout << std::endl;
-	
+
 	server_.Get(R"(/forward/shutdown)", [&](const httplib::Request& req, httplib::Response& rsp) {
 		std::string key = req.get_param_value("key");
 		std::string shutdownKey = config_->GetValueAsString("manager", "key", "");
 		if (shutdownKey.compare(key) != 0) {
-			SPDLOG_ERROR("éžæ³•è¯·æ±‚å…³é—­æœ¬åœ°æœåŠ¡,key={}", key);
-			rsp.set_content("æ“ä½œå¤±è´¥,å¯†é’¥ä¸æ­£ç¡®.", "text/html; charset=utf-8");
+			SPDLOG_ERROR("·Ç·¨ÇëÇó¹Ø±Õ±¾µØ·þÎñ,key={}", key);
+			rsp.set_content("²Ù×÷Ê§°Ü,ÃÜÔ¿²»ÕýÈ·.", "text/html; charset=utf-8");
 			return;
 		}
 
@@ -149,8 +148,8 @@ bool CUnionHttpProxyServer::Work() {
 		});
 
 	bool isRunning = server_.listen(
-		config_->GetValueAsString("unionpay_forward", "proxy.host", "localhost"),
-		config_->GetValueAsUint32("unionpay_forward", "proxy.port", 9528));
+		config_->GetValueAsString("iot_forward", "proxy.host", "localhost"),
+		config_->GetValueAsUint32("iot_forward", "proxy.port", 9529));
 
 	_endthreadex(0);
 	return true;

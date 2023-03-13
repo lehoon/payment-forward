@@ -10,12 +10,15 @@
 #include "json_string.h"
 #include "json_object.h"
 
+#include "httplib.h"
+
 class JsonObject {
 private:
 	JsonObject() {}
 	~JsonObject() {}
 public:
 	static JsonString toJSONString(const std::map <JsonString, JsonString>& mapinfo);
+	static JsonString toJSONString(const httplib::Headers & header);
 	static long getLong(const JsonString& jsonString, const JsonString& fieldname);
 
 	static int markRequired(const rapidjson::Document& d, const JsonString& requiredField);

@@ -159,6 +159,7 @@
     <ClCompile Include="DatabaseClient.cpp" />
     <ClCompile Include="DateTime.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="IotHttpProxyServer.cpp" />
     <ClCompile Include="json.cpp" />
     <ClCompile Include="json_object.cpp" />
     <ClCompile Include="json_string.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="DateTime.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="httplib.h" />
+    <ClInclude Include="IotHttpProxyServer.h" />
     <ClInclude Include="IThreadWrap.h" />
     <ClInclude Include="json.h" />
     <ClInclude Include="json_object.h" />

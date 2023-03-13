@@ -80,6 +80,7 @@ bool CNotifyHttpProxyServer::Work() {
 				record.url = rule->origin_url;
 				record.originHost = req.remote_addr;
 				record.originPort = req.remote_port;
+				record.header = JsonObject::toJSONString(req.headers);
 				record.forwardHost = config_->GetValueAsString("notify_forward", "forward.host", "localhost");
 				record.forwardPort = config_->GetValueAsUint32("notify_forward", "forward.port", 80);
 				record.forwardUrl = rule->target_url;
@@ -147,6 +148,7 @@ bool CNotifyHttpProxyServer::Work() {
 				record.url = rule->origin_url;
 				record.originHost = req.remote_addr;
 				record.originPort = req.remote_port;
+				record.header = JsonObject::toJSONString(req.headers);
 				record.forwardHost = config_->GetValueAsString("notify_forward", "forward.host", "localhost");
 				record.forwardPort = config_->GetValueAsUint32("notify_forward", "forward.port", 80);
 				record.forwardUrl = rule->target_url;

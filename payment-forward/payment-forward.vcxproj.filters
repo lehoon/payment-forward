@@ -63,6 +63,9 @@
     <ClCompile Include="socketutil.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="IotHttpProxyServer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="httplib.h">
@@ -120,6 +123,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="socketutil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IotHttpProxyServer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

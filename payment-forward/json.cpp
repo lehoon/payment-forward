@@ -82,6 +82,20 @@ JsonString JsonObject::toJSONString(const std::map <JsonString, JsonString>& map
 	return JsonDocumentToString(d);
 }
 
+JsonString JsonObject::toJSONString(const httplib::Headers& header) {
+	rapidjson::Document d;
+	d.SetObject();
+	for (std::map<JsonString, JsonString>::const_iterator it = header.begin(); it != header.end(); it++) {
+		rapidjson::Value k;
+		k.SetString(it->first.c_str(), d.GetAllocator());
+		rapidjson::Value v;
+		v.SetString(it->second.c_str(), d.GetAllocator());
+		d.AddMember(k, v, d.GetAllocator());
+	}
+
+	return JsonDocumentToString(d);
+}
+
 long JsonObject::getLong(const JsonString& jsonString, const JsonString& fieldname) {
 	rapidjson::Document d;
 	d.Parse(jsonString.c_str());

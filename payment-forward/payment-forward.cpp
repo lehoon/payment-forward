@@ -9,6 +9,7 @@
 #include "Configure.h"
 #include "socketutil.h"
 #include "NotifyHttpClient.h"
+#include "IotHttpProxyServer.h"
 #include "NotifyHttpProxyServer.h"
 #include "UnionHttpProxyServer.h"
 
@@ -47,7 +48,7 @@ int main()
 		}
 
 		SPDLOG_INFO("启动银联通知转发服务成功");
-		Sleep(3000);
+		Sleep(2000);
 
 		CUnionHttpProxyServer unionHttpProxyServer(&config);
 		if (!unionHttpProxyServer.InitTask()) {
@@ -61,6 +62,19 @@ int main()
 		}
 
 		SPDLOG_INFO("启动银联请求转发服务成功");
+		Sleep(2000);
+
+		CIotHttpProxyServer iotHttpProxyServer(&config);
+		if (!iotHttpProxyServer.InitTask()) {
+			SPDLOG_ERROR("消息代理程序未定义规则,未启动代理程序");
+		}
+		else {
+			if (!iotHttpProxyServer.StartTask()) {
+				SPDLOG_ERROR("iot http proxy server启动失败.");
+				std::cout << "iot http server启动失败." << std::endl;
+			}
+		}
+
 		static base::semaphore sem;
 		signal(SIGINT, [](int) { 
 			signal(SIGINT, SIG_IGN);
@@ -68,19 +82,35 @@ int main()
 		});
 		sem.wait();
 
-		SPDLOG_INFO("接收到退出系统信号,开始退出银联请求转发服务");
+		SPDLOG_INFO("接收到退出系统信号,开始退出请求转发服务");
+		std::cout << "接收到退出系统信号,开始退出请求转发服务" << std::endl;
+
+		SPDLOG_INFO("开始退出银联请求转发服务");
+		std::cout << "开始退出银联请求转发服务" << std::endl;
 		CNotifyHttpClient::SendShutdownRequest(config.GetValueAsString("unionpay_forward", "proxy.host", "localhost"),
 				config.GetValueAsUint32("unionpay_forward", "proxy.port", 9528),
 				config.GetValueAsString("manager", "key", ""));
 		Sleep(2000);
 		
 		SPDLOG_INFO("退出银联请求转发服务成功");
-		SPDLOG_INFO("接收到退出系统信号,开始退出银联通知转发服务");
+		std::cout << "退出银联请求转发服务成功" << std::endl;
+		SPDLOG_INFO("开始退出银联通知转发服务");
+		std::cout << "开始退出银联通知转发服务" << std::endl;
 		CNotifyHttpClient::SendShutdownRequest(config.GetValueAsString("notify_forward", "proxy.host", "localhost"),
 				config.GetValueAsUint32("notify_forward", "proxy.port", 9527),
 				config.GetValueAsString("manager", "key", ""));
 		Sleep(2000);
+
 		SPDLOG_INFO("退出银联通知转发服务成功");
+		std::cout << "退出银联通知转发服务成功" << std::endl;
+		SPDLOG_INFO("开始退出iot转发服务");
+		std::cout << "开始退出iot转发服务" << std::endl;
+		CNotifyHttpClient::SendShutdownRequest(config.GetValueAsString("iot_forward", "proxy.host", "localhost"),
+			config.GetValueAsUint32("iot_forward", "proxy.port", 9529),
+			config.GetValueAsString("manager", "key", ""));
+		Sleep(2000);
+		SPDLOG_INFO("退出iot转发服务成功");
+		std::cout << "退出iot转发服务成功" << std::endl;
 		SPDLOG_INFO("程序退出");
 		CLogger::Close();
 	}
