@@ -5,7 +5,7 @@
 #include "json_object.h"
 #include "IotPaymentServer.h"
 
-CIotPaymentHttpServer::CIotPaymentHttpServer(CConfigure* config) : config_(config) {
+CIotPaymentHttpServer::CIotPaymentHttpServer(CConfigure* config) : config_(config), threadHandle_(nullptr), threadId_(0) {
 }
 
 CIotPaymentHttpServer::~CIotPaymentHttpServer() {
@@ -41,7 +41,7 @@ bool CIotPaymentHttpServer::Work() {
 	httplib::Server server_;
 	server_.set_base_dir("./");
 
-	server_.Post("/iot/order", [&](const httplib::Request& req, httplib::Response& rsp) {
+	server_.Post("/iot/order/sync", [&](const httplib::Request& req, httplib::Response& rsp) {
 		std::string content = req.body;
 		IotPaymentRecord record;
 		if (JsonObject::Json2IotPaymentRecord(content, record) != JsonObject::SUCCESS) {
